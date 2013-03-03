@@ -1,0 +1,18 @@
+﻿Name: DarkSky Messaging
+AntiForgery: enabled
+Author: DarkSky Development
+Website: http://darkskydevelopment.net
+Version: 1.0
+OrchardVersion: 1.6
+Description: Message Template Management features.
+Features:
+    DarkSky.Messaging:
+        Name: DarkSky Messaging
+        Description: Message Template Management features.
+        Category: Messaging
+        Dependencies: Orchard.Messaging, Orchard.Tokens
+    DarkSky.Messaging.Rules:
+        Name: DarkSky Messaging Rules
+        Description: Message Template Management features.
+        Category: Rules
+        Dependencies: DarkSky.Messaging, Orchard.Rules, Orchard.Forms
