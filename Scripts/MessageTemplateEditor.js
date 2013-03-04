@@ -27,7 +27,7 @@
         return $.Deferred().resolve(currentLayoutContent);
     };
 
-    var updatePreview = function (editor, previewFrame, layoutPicker) {
+    var updatePreview = function (editor, previewFrame, layoutPicker, layoutBeacon) {
         var frame = previewFrame[0];
         var preview = frame.contentDocument || frame.contentWindow.document;
         var content = editor.getValue();
@@ -35,7 +35,7 @@
 
         layoutContentPromise.done(function (layoutContent) {
             if (layoutContent != null && layoutContent != "") {
-                content = layoutContent.replace("@RenderBody()", content);
+            	content = layoutContent.replace(layoutBeacon, content);
             }
             preview.open();
             preview.write(content);
@@ -49,6 +49,7 @@
             var textArea = $(this).find("textarea.template-editor")[0];
             var layoutPicker = $(this).find(".layout-selector-wrapper select");
             var previewPane = $(this).find("iframe");
+            var layoutBeacon = $(this).data("layout-beacon");
             var editor = CodeMirror.fromTextArea(textArea, {
                 lineNumbers: true,
                 mode: "application/x-ejs",
@@ -61,7 +62,7 @@
             });
             
             var delay = 10;
-            var delayTimerCallback = function () { updatePreview(editor, previewPane, layoutPicker); };
+            var delayTimerCallback = function () { updatePreview(editor, previewPane, layoutPicker, layoutBeacon); };
             var delayTimer = setTimeout(delayTimerCallback, delay);
 
             editor.on("change", function () {
@@ -71,7 +72,7 @@
 
             layoutPicker.on("change", function () {
                 currentLayoutContent = null;
-                updatePreview(editor, previewPane, layoutPicker);
+                updatePreview(editor, previewPane, layoutPicker, layoutBeacon);
             });
         });
     };

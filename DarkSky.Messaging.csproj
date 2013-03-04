@@ -242,6 +242,13 @@
     <Content Include="Scripts\CodeMirror\theme\xq-dark.css" />
     <Content Include="Scripts\MessageTemplateEditor.js" />
     <Content Include="Scripts\TemplateLayoutPicker.js" />
+    <Content Include="Styles\Common.css">
+      <DependentUpon>Common.less</DependentUpon>
+    </Content>
+    <Content Include="Styles\Common.less" />
+    <Content Include="Styles\Common.min.css">
+      <DependentUpon>Common.less</DependentUpon>
+    </Content>
     <Content Include="Styles\MessageTemplateEditor.css">
       <DependentUpon>MessageTemplateEditor.less</DependentUpon>
     </Content>
@@ -280,19 +287,31 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\MessageTemplateController.cs" />
+    <Compile Include="Handlers\MessagingSiteSettingsPartHandler.cs" />
+    <Compile Include="Services\IParserEngine.cs" />
+    <Compile Include="Parsers\ParserEngineBase.cs" />
+    <Compile Include="Settings\MessageTemplatePartSettings.cs" />
+    <Compile Include="Settings\MessageTemplatePartSettingsEvents.cs" />
+    <Compile Include="Shapes\ParserPickerShape.cs" />
+    <Compile Include="ViewModels\MessageTemplateSettingsViewModel.cs" />
+    <Compile Include="Drivers\MessagingSiteSettingsPartDriver.cs" />
     <Compile Include="Drivers\MessageTemplatePartDriver.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\XElementExtensions.cs" />
     <Compile Include="Handlers\MessageTemplatePartHandler.cs" />
     <Compile Include="Migrations.cs" />
+    <Compile Include="Models\MessagingSiteSettingsPart.cs" />
     <Compile Include="Models\MessageTemplatePart.cs" />
+    <Compile Include="Parsers\Razor\RazorParserEngine.cs" />
     <Compile Include="Rules\TemplatedMessageActions.cs" />
     <Compile Include="Rules\TemplatedMessageForm.cs" />
-    <Compile Include="Services\IRazorMachine.cs" />
+    <Compile Include="Parsers\Razor\RazorMachine.cs" />
     <Compile Include="Services\MessageTemplateService.cs" />
+    <Compile Include="Parsers\Default\SimpleTextParserEngine.cs" />
     <Compile Include="Services\TemplatedMessageHandler.cs" />
     <Compile Include="ViewModels\MessageTemplateViewModel.cs" />
+    <Compile Include="Models\ParserDescriptor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.md" />
@@ -306,7 +325,18 @@
     <Content Include="Views\EditorTemplates\Parts\MessageTemplate.cshtml" />
     <Content Include="Views\EditorTemplates\TemplateLayoutPicker.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Views\EditorTemplates\Parts\MessagingSiteSettings.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\EditorTemplates\ParserPicker.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ParserPicker.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\DefinitionTemplates\MessageTemplatePartSettings.cshtml" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

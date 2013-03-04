@@ -1,0 +1,11 @@
+﻿@model DarkSky.Messaging.Settings.MessageTemplatePartSettings
+@{
+	Style.Include("Common.css", "Common.min.css");
+}
+<fieldset>
+	<div class="editor-field">
+		@Html.LabelFor(m => m.DefaultParserId, T("Default Parser"))
+		@Html.EditorFor(m => m.DefaultParserId)
+		<span class="hint">@T("The template parser engine to use by default.")</span>
+	</div>
+</fieldset>

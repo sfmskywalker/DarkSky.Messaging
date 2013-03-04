@@ -1,10 +1,12 @@
 ﻿using System.Linq;
+using System.Xml;
 using DarkSky.Messaging.Extensions;
 using DarkSky.Messaging.Models;
 using DarkSky.Messaging.Services;
 using DarkSky.Messaging.ViewModels;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
+using Orchard.ContentManagement.Handlers;
 using Orchard.Environment.Extensions;
 
 namespace DarkSky.Messaging.Drivers {
@@ -28,6 +30,7 @@ namespace DarkSky.Messaging.Drivers {
 
         protected override DriverResult Editor(MessageTemplatePart part, IUpdateModel updater, dynamic shapeHelper) {
             var viewModel = new MessageTemplateViewModel {
+                ExpectedParser = _messageTemplateService.SelectParser(part),
                 Layouts = _messageTemplateService.GetLayouts().Where(x => x.Id != part.Id).ToList()
             };
 
@@ -49,6 +52,30 @@ namespace DarkSky.Messaging.Drivers {
             }
 
             return ContentShape("Parts_MessageTemplate_Edit", () => shapeHelper.EditorTemplate(TemplateName: "Parts/MessageTemplate", Model: viewModel, Prefix: Prefix));
+        }
+
+        protected override void Importing(MessageTemplatePart part, ImportContentContext context) {
+            context.ImportAttribute(part.PartDefinition.Name, "Title", x => part.Title = x);
+            context.ImportAttribute(part.PartDefinition.Name, "Subject", x => part.Subject = x);
+            context.ImportAttribute(part.PartDefinition.Name, "Text", x => part.Text = x);
+            context.ImportAttribute(part.PartDefinition.Name, "IsLayout", x => part.IsLayout = XmlConvert.ToBoolean(x));
+            context.ImportAttribute(part.PartDefinition.Name, "Layout", x => {
+                var layout = context.GetItemFromSession(x);
+
+                if (layout != null && layout.Is<MessageTemplatePart>()) {
+                    part.Layout = layout.As<MessageTemplatePart>();
+                }
+            });
+        }
+
+        protected override void Exporting(MessageTemplatePart part, ExportContentContext context) {
+            context.Element(part.PartDefinition.Name).SetAttributeValue("Title", part.Title);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("Subject", part.Subject);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("Text", part.Text);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("IsLayout", part.IsLayout);
+
+            if(part.Layout != null)
+                context.Element(part.PartDefinition.Name).SetAttributeValue("Layout", context.ContentManager.GetItemMetadata(part.Layout).Identity.ToString());
         }
     }
 }

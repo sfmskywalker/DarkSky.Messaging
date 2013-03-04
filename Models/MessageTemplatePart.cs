@@ -1,12 +1,11 @@
-﻿using Orchard.ContentManagement;
+﻿using DarkSky.Messaging.Settings;
+using Orchard.ContentManagement;
 using Orchard.ContentManagement.Aspects;
 using Orchard.ContentManagement.Records;
 using Orchard.ContentManagement.Utilities;
 using Orchard.Data.Conventions;
-using Orchard.Environment.Extensions;
 
 namespace DarkSky.Messaging.Models {
-    [OrchardFeature("DarkSky.Messaging")]
     public class MessageTemplatePart : ContentPart<MessageTemplatePartRecord>, ITitleAspect {
         internal LazyField<MessageTemplatePart> LayoutField = new LazyField<MessageTemplatePart>();
 
@@ -34,9 +33,12 @@ namespace DarkSky.Messaging.Models {
             get { return LayoutField.Value; }
             set { LayoutField.Value = value; }
         }
+
+        public string DefaultParserId {
+            get { return Settings.GetModel<MessageTemplatePartSettings>().DefaultParserId; }
+        }
     }
 
-    [OrchardFeature("DarkSky.Messaging")]
     public class MessageTemplatePartRecord : ContentPartRecord {
         public virtual string Title { get; set; }
         public virtual string Subject { get; set; }

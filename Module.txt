@@ -11,6 +11,11 @@ Features:
         Description: Message Template Management features.
         Category: Messaging
         Dependencies: Orchard.Messaging, Orchard.Tokens
+    DarkSky.Messaging.Parsers.Razor:
+        Name: DarkSky Razor Parser
+        Description: Implements Razor as the parser engine for message templates.
+        Category: Parsers
+        Dependencies: DarkSky.Messaging
     DarkSky.Messaging.Rules:
         Name: DarkSky Messaging Rules
         Description: Message Template Management features.

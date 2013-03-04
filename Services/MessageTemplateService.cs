@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using DarkSky.Messaging.Models;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
-using Orchard.UI.Notify;
-using Xipton.Razor.Core;
-using LogLevel = Orchard.Logging.LogLevel;
 
 namespace DarkSky.Messaging.Services {
     public interface IMessageTemplateService : IDependency {
@@ -16,19 +11,23 @@ namespace DarkSky.Messaging.Services {
         IEnumerable<MessageTemplatePart> GetTemplates();
         IEnumerable<MessageTemplatePart> GetTemplatesWithLayout(int layoutId);
         MessageTemplatePart GetTemplate(int id);
-        string ParseTemplate(MessageTemplatePart template, object model = null, object viewBag = null);
+        string ParseTemplate(ParseTemplateContext context);
+        IEnumerable<IParserEngine> GetParsers();
+        IEnumerable<ParserDescriptor> GetParserDescriptors();
+        IParserEngine GetParser(string id);
+        IParserEngine SelectParser(MessageTemplatePart template);
     }
 
     [OrchardFeature("DarkSky.Messaging")]
     public class MessageTemplateService : Component, IMessageTemplateService {
         private readonly IContentManager _contentManager;
-        private readonly IRazorMachine _razorMachine;
-        private readonly INotifier _notifier;
+        private readonly IEnumerable<IParserEngine> _parsers;
+        private readonly IOrchardServices _services;
 
-        public MessageTemplateService(IContentManager contentManager, IRazorMachine razorMachine, INotifier notifier) {
-            _contentManager = contentManager;
-            _razorMachine = razorMachine;
-            _notifier = notifier;
+        public MessageTemplateService(IEnumerable<IParserEngine> parsers, IOrchardServices services) {
+            _contentManager = services.ContentManager;
+            _parsers = parsers;
+            _services = services;
         }
 
         public IEnumerable<MessageTemplatePart> GetLayouts() {
@@ -47,44 +46,37 @@ namespace DarkSky.Messaging.Services {
             return _contentManager.Get<MessageTemplatePart>(id);
         }
 
-        public string ParseTemplate(MessageTemplatePart templatePart, object model = null, object viewBag = null) {
-            var layout = templatePart.Layout;
-            var templateContent = templatePart.Text;
+        public string ParseTemplate(ParseTemplateContext context) {
+            var parser = SelectParser(context.Template);
+            return parser.ParseTemplate(context);
+        }
 
-            if (layout != null) {
-                _razorMachine.RegisterLayout("~/shared/_layout.cshtml", layout.Text);
-                templateContent = "@{ Layout = \"_layout\"; }\r\n" + templateContent;
+        public IParserEngine GetParser(string id) {
+            return _parsers.SingleOrDefault(x => x.Id == id);
+        }
+
+        public IParserEngine SelectParser(MessageTemplatePart template) {
+            var parserId = template.DefaultParserId;
+            IParserEngine parser = null;
+
+            if (!string.IsNullOrWhiteSpace(parserId)) {
+                parser = GetParser(parserId);
             }
 
-            try {
-                // Convert viewBag to string/object pairs if required
-                if (viewBag != null) {
-                    if (viewBag is IEnumerable<KeyValuePair<string, string>>)
-                        viewBag = ((IEnumerable<KeyValuePair<string, string>>) viewBag).Select(x => new KeyValuePair<string, object>(x.Key, x.Value)).ToDictionary(x => x.Key, x => x.Value);
-                }
-                var template = _razorMachine.ExecuteContent(templateContent, model, viewBag);
-                return template.Result;
+            if (parser == null) {
+                parserId = _services.WorkContext.CurrentSite.As<MessagingSiteSettingsPart>().DefaultParserId;
+                parser = GetParser(parserId);
             }
-            catch (TemplateCompileException ex) {
-                Logger.Log(LogLevel.Error, ex, "Failed to parse the {0} Razor template with layout {1}", templatePart.Title, layout != null ? layout.Title : "[none]");
-                _notifier.Error(T("Failed to parse the {0} Razor template with layout {1}", templatePart.Title, layout != null ? layout.Title : "[none]"));
-                var sb = new StringBuilder();
-                var currentException = (Exception)ex;
 
-                while (currentException != null) {
-                    sb.AppendLine(currentException.Message);
-                    currentException = currentException.InnerException;
-                }
+            return parser ?? _parsers.First();
+        }
 
-                sb.AppendFormat("\r\nTemplate ({0}):\r\n", templatePart.Title);
-                sb.AppendLine(templatePart.Text);
+        public IEnumerable<IParserEngine> GetParsers() {
+            return _parsers;
+        }
 
-                if (layout != null) {
-                    sb.AppendFormat("\r\nLayout ({0}):\r\n", layout.Title);
-                    sb.AppendLine(layout.Text);
-                }
-                return sb.ToString();
-            }   
+        public IEnumerable<ParserDescriptor> GetParserDescriptors() {
+            return GetParsers().Select(x => x.Describe());
         }
     }
 }

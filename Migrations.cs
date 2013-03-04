@@ -16,6 +16,10 @@ namespace DarkSky.Messaging {
                  .Column<int>("LayoutId", c => c.Nullable())
                  .Column<bool>("IsLayout", c => c.NotNull()));
 
+             SchemaBuilder.CreateTable("MessagingSiteSettingsPartRecord", table => table
+                 .ContentPartRecord()
+                 .Column<string>("DefaultParserId"));
+
              ContentDefinitionManager.AlterPartDefinition("MessageTemplatePart", part => part.Attachable());
              ContentDefinitionManager.AlterTypeDefinition("EmailTemplate", type => type
                  .WithPart("CommonPart", part => part

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using DarkSky.Messaging.Models;
+using DarkSky.Messaging.Services;
 
 namespace DarkSky.Messaging.ViewModels {
     public class MessageTemplateViewModel {
@@ -14,6 +15,7 @@ namespace DarkSky.Messaging.ViewModels {
         [UIHint("TemplateLayoutPicker")]
         public int? LayoutId { get; set; }
         public bool IsLayout { get; set; }
+        public IParserEngine ExpectedParser { get; set; }
         public IList<MessageTemplatePart> Layouts { get; set; }
     }
 }
