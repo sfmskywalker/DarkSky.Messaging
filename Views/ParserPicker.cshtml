@@ -1,8 +1,8 @@
 ﻿@using System.Linq
-@using DarkSky.Messaging.Models
+@using DarkSky.Messaging.Services
 @{
-	var parsers = ((IEnumerable<ParserDescriptor>)Model.Parsers).ToList();
+	var parsers = ((IEnumerable<IParserEngine>)Model.Parsers).ToList();
 	var currentValue = ViewData.TemplateInfo.FormattedModelValue as string;
-	var options = parsers.Select(x => new SelectListItem { Text = x.DislayText, Value = x.Id.ToString(), Selected = x.Id == currentValue });
+	var options = parsers.Select(x => new SelectListItem { Text = x.DisplayText, Value = x.Id.ToString(), Selected = x.Id == currentValue });
 }
 @Html.DropDownList("", options, T("(Default)").ToString())

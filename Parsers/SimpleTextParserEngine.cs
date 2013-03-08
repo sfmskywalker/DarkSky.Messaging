@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DarkSky.Messaging.Models;
 using DarkSky.Messaging.Services;
 
-namespace DarkSky.Messaging.Parsers.Default {
+namespace DarkSky.Messaging.Parsers {
 	public class SimpleTextParserEngine : ParserEngineBase {
-
 		public override string DisplayText {
 			get { return "Simple Text Parser"; }
 		}
@@ -14,10 +14,9 @@ namespace DarkSky.Messaging.Parsers.Default {
 			get { return "[Body]"; }
 		}
 
-		public override string ParseTemplate(ParseTemplateContext context) {
-			var templatePart = context.Template;
-			var layout = templatePart.Layout;
-			var templateContent = new StringBuilder(templatePart.Text);
+		public override string ParseTemplate(MessageTemplatePart template, ParseTemplateContext context) {
+			var layout = template.Layout;
+			var templateContent = new StringBuilder(template.Text);
 			var viewBag = context.ViewBag;
 
 			if (layout != null) {

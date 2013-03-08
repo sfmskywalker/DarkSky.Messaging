@@ -13,13 +13,6 @@ namespace DarkSky.Messaging.Parsers {
 		}
 
 		public abstract string LayoutBeacon { get; }
-		public abstract string ParseTemplate(ParseTemplateContext context);
-		
-		public ParserDescriptor Describe() {
-			return new ParserDescriptor {
-				DislayText = DisplayText,
-				Id = Id
-			};
-		}
+		public abstract string ParseTemplate(MessageTemplatePart template, ParseTemplateContext context);
 	}
 }

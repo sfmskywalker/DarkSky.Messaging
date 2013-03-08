@@ -15,7 +15,7 @@ namespace DarkSky.Messaging.Shapes {
 
 		public void Discover(ShapeTableBuilder builder) {
 			builder.Describe("ParserPicker").OnDisplaying(context => {
-				context.Shape.Parsers = _messageTemplateService.Value.GetParserDescriptors().ToList();
+				context.Shape.Parsers = _messageTemplateService.Value.GetParsers().ToList();
 			});
 		}
 	}

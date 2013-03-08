@@ -8,7 +8,7 @@ using Orchard.Environment.Extensions;
 using Orchard.Logging;
 using Xipton.Razor.Core;
 
-namespace DarkSky.Messaging.Parsers.Razor {
+namespace DarkSky.Messaging.Parsers {
     [OrchardFeature("DarkSky.Messaging.Parsers.Razor")]
     public class RazorParserEngine : ParserEngineBase {
         private readonly IRazorMachine _razorMachine;
@@ -25,10 +25,9 @@ namespace DarkSky.Messaging.Parsers.Razor {
             get { return "@RenderBody()"; }
         }
 
-        public override string ParseTemplate(ParseTemplateContext context) {
-            var templatePart = context.Template;
-            var layout = templatePart.Layout;
-            var templateContent = templatePart.Text;
+        public override string ParseTemplate(MessageTemplatePart template, ParseTemplateContext context) {
+            var layout = template.Layout;
+            var templateContent = template.Text;
             var viewBag = context.ViewBag;
 
             if (layout != null) {
@@ -42,12 +41,12 @@ namespace DarkSky.Messaging.Parsers.Razor {
                     if (viewBag is IEnumerable<KeyValuePair<string, string>>)
                         viewBag = ((IEnumerable<KeyValuePair<string, string>>) viewBag).Select(x => new KeyValuePair<string, object>(x.Key, x.Value)).ToDictionary(x => x.Key, x => x.Value);
                 }
-                var template = _razorMachine.ExecuteContent(templateContent, context.Model, viewBag);
-                return template.Result;
+                var tmpl = _razorMachine.ExecuteContent(templateContent, context.Model, viewBag);
+                return tmpl.Result;
             }
             catch (TemplateCompileException ex) {
-                Logger.Log(LogLevel.Error, ex, "Failed to parse the {0} Razor template with layout {1}", templatePart.Title, layout != null ? layout.Title : "[none]");
-                return BuildErrorContent(ex, templatePart, layout);
+                Logger.Log(LogLevel.Error, ex, "Failed to parse the {0} Razor template with layout {1}", template.Title, layout != null ? layout.Title : "[none]");
+                return BuildErrorContent(ex, template, layout);
             }   
         }
 

@@ -303,15 +303,14 @@
     <Compile Include="Migrations.cs" />
     <Compile Include="Models\MessagingSiteSettingsPart.cs" />
     <Compile Include="Models\MessageTemplatePart.cs" />
-    <Compile Include="Parsers\Razor\RazorParserEngine.cs" />
+    <Compile Include="Parsers\RazorParserEngine.cs" />
     <Compile Include="Rules\TemplatedMessageActions.cs" />
     <Compile Include="Rules\TemplatedMessageForm.cs" />
-    <Compile Include="Parsers\Razor\RazorMachine.cs" />
+    <Compile Include="Parsers\RazorMachine.cs" />
     <Compile Include="Services\MessageTemplateService.cs" />
-    <Compile Include="Parsers\Default\SimpleTextParserEngine.cs" />
+    <Compile Include="Parsers\SimpleTextParserEngine.cs" />
     <Compile Include="Services\TemplatedMessageHandler.cs" />
     <Compile Include="ViewModels\MessageTemplateViewModel.cs" />
-    <Compile Include="Models\ParserDescriptor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.md" />

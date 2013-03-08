@@ -15,7 +15,7 @@ namespace DarkSky.Messaging.ViewModels {
         [UIHint("TemplateLayoutPicker")]
         public int? LayoutId { get; set; }
         public bool IsLayout { get; set; }
-        public IParserEngine ExpectedParser { get; set; }
         public IList<MessageTemplatePart> Layouts { get; set; }
+        public IParserEngine ExpectedParser { get; set; }
     }
 }

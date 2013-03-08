@@ -11,9 +11,8 @@ namespace DarkSky.Messaging.Services {
         IEnumerable<MessageTemplatePart> GetTemplates();
         IEnumerable<MessageTemplatePart> GetTemplatesWithLayout(int layoutId);
         MessageTemplatePart GetTemplate(int id);
-        string ParseTemplate(ParseTemplateContext context);
+        string ParseTemplate(MessageTemplatePart template, ParseTemplateContext context);
         IEnumerable<IParserEngine> GetParsers();
-        IEnumerable<ParserDescriptor> GetParserDescriptors();
         IParserEngine GetParser(string id);
         IParserEngine SelectParser(MessageTemplatePart template);
     }
@@ -46,9 +45,9 @@ namespace DarkSky.Messaging.Services {
             return _contentManager.Get<MessageTemplatePart>(id);
         }
 
-        public string ParseTemplate(ParseTemplateContext context) {
-            var parser = SelectParser(context.Template);
-            return parser.ParseTemplate(context);
+        public string ParseTemplate(MessageTemplatePart template, ParseTemplateContext context) {
+            var parser = SelectParser(template);
+            return parser.ParseTemplate(template, context);
         }
 
         public IParserEngine GetParser(string id) {
@@ -73,10 +72,6 @@ namespace DarkSky.Messaging.Services {
 
         public IEnumerable<IParserEngine> GetParsers() {
             return _parsers;
-        }
-
-        public IEnumerable<ParserDescriptor> GetParserDescriptors() {
-            return GetParsers().Select(x => x.Describe());
         }
     }
 }

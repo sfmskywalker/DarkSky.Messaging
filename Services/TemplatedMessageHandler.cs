@@ -25,7 +25,9 @@ namespace DarkSky.Messaging.Services {
 
             var templateId = int.Parse(context.Properties["TemplateId"]);
             var template = _messageTemplateService.GetTemplate(templateId);
-            var body = _messageTemplateService.ParseTemplate(new ParseTemplateContext { Template =  template, ViewBag = context.Properties });
+            var body = _messageTemplateService.ParseTemplate(template, new ParseTemplateContext {
+                ViewBag = context.Properties
+            });
 
             context.MailMessage.Subject = _tokenizer.Replace(template.Subject, context.Properties, ReplaceOptions.Default);
             context.MailMessage.Body = body;

@@ -6,12 +6,10 @@ namespace DarkSky.Messaging.Services {
 		string Id { get; }
 		string DisplayText { get; }
 		string LayoutBeacon { get; }
-		string ParseTemplate(ParseTemplateContext context);
-		ParserDescriptor Describe();
+		string ParseTemplate(MessageTemplatePart template, ParseTemplateContext context);
 	}
 
 	public class ParseTemplateContext {
-		public MessageTemplatePart Template { get; set; }
 		public object Model { get; set; }
 		public object ViewBag { get; set; }
 	}
