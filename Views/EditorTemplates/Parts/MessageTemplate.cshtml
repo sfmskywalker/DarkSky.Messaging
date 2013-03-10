@@ -1,0 +1,62 @@
+﻿@model DarkSky.Messaging.ViewModels.MessageTemplateViewModel 
+@{
+    Style.Include("~/Modules/DarkSky.Messaging/Scripts/CodeMirror/lib/codemirror.css");
+    Style.Include("~/Modules/DarkSky.Messaging/Scripts/CodeMirror/theme/vibrant-ink.css");
+    Style.Include("Common.css", "Common.min.css");
+    Style.Include("MessageTemplateEditor.css", "MessageTemplateEditor.min.css");
+    Script.Require("jQuery");
+    Script.Include("CodeMirror/lib/codemirror.js");
+    Script.Include("CodeMirror/mode/xml/xml.js");
+    Script.Include("CodeMirror/mode/javascript/javascript.js");
+    Script.Include("CodeMirror/mode/css/css.js");
+    Script.Include("CodeMirror/mode/htmlmixed/htmlmixed.js");
+    Script.Include("CodeMirror/mode/htmlembedded/htmlembedded.js");
+    Script.Include("MessageTemplateEditor.js");
+}
+<fieldset class="message-template-editor" data-layout-beacon="@Model.ExpectedParser.LayoutBeacon">
+    <div class="editor-field">
+        @Html.LabelFor(m => m.Title, T("Title"))
+        @Html.TextBoxFor(m => m.Title, new { required = "required", @class = "text large" })
+        @Html.ValidationMessageFor(m => m.Title)
+        <span class="hint">@T("The title of the message")</span>
+    </div>
+    <div class="editor-field">
+        @Html.LabelFor(m => m.Subject, T("Subject"))
+        @Html.TextBoxFor(m => m.Subject, new { required = "required", @class = "text large tokenized" })
+        @Html.ValidationMessageFor(m => m.Subject)
+        <span class="hint">@T("The subject to use when sending a message")</span>
+    </div>
+    @if (Model.Layouts.Any()) {
+        <div class="editor-field layout-selector-wrapper">
+            @Html.LabelFor(m => m.LayoutId, T("Layout"))
+            @Html.EditorFor(m => m.LayoutId, new { Model.Layouts })
+            <span class="hint">@T("Optionally select another template to use as the layout / masterpage template")</span>
+        </div>
+    }
+    <div class="row">
+        <div class="span6">
+            <div class="editor-field">
+                @Html.LabelFor(m => m.Text, T("Template. (Expected parser: {0})", Model.ExpectedParser.DisplayText))
+                <div class="codemirror">
+                    @Html.TextAreaFor(m => m.Text, new { @class = "template-editor"})
+                </div>
+                @Html.ValidationMessageFor(m => m.Text)
+                <span class="hint">@T("The template of the message")</span>
+            </div>		
+        </div>
+        <div class="span6">
+            <div class="editor-field">
+                <label>@T("Preview")</label>
+                <div class="codemirror-preview">
+                    <iframe></iframe>
+                </div>
+                <span class="hint">@T("The preview of the template")</span>
+            </div>
+        </div>
+    </div>
+    <div class="editor-field">
+        <input type="checkbox" name="@Html.FieldNameFor(m => m.IsLayout)" id="@Html.FieldIdFor(m => m.IsLayout)" value="True" @if(Model.IsLayout){<text>checked="checked"</text>} />
+        <label for="@Html.FieldIdFor(m => m.IsLayout)" class="forcheckbox">@T("This is a Layout")</label>
+        <span class="hint">@T("Check this option to use it as the layout (a.k.a. Master Page) for other templates.")</span>
+    </div>
+</fieldset>
